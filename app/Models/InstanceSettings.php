@@ -31,6 +31,7 @@ class InstanceSettings extends Model
         'update_check_frequency' => 'string',
         'sentinel_token' => 'encrypted',
         'is_wire_navigate_enabled' => 'boolean',
+        'is_auto_redirect_enabled' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -39,9 +40,10 @@ class InstanceSettings extends Model
             // Clear once() cache so subsequent calls get fresh data
             Once::flush();
 
-            // Clear trusted hosts cache when FQDN changes
+            // Clear caches when FQDN changes
             if ($settings->wasChanged('fqdn')) {
                 \Cache::forget('instance_settings_fqdn_host');
+                \Cache::forget('fqdn_redirect_dns_valid');
             }
         });
     }

@@ -44,6 +44,8 @@ class Index extends Component
 
     public bool $forceSaveDomains = false;
 
+    public bool $is_auto_redirect_enabled = false;
+
     public $buildActivityId = null;
 
     protected array $messages = [
@@ -73,6 +75,7 @@ class Index extends Component
         $this->public_ipv6 = $this->settings->public_ipv6;
         $this->instance_timezone = $this->settings->instance_timezone;
         $this->dev_helper_version = $this->settings->dev_helper_version;
+        $this->is_auto_redirect_enabled = $this->settings->is_auto_redirect_enabled ?? false;
     }
 
     #[Computed]
@@ -95,6 +98,7 @@ class Index extends Component
         $this->settings->public_ipv6 = $this->public_ipv6;
         $this->settings->instance_timezone = $this->instance_timezone;
         $this->settings->dev_helper_version = $this->dev_helper_version;
+        $this->settings->is_auto_redirect_enabled = $this->is_auto_redirect_enabled;
         if ($isSave) {
             $this->settings->save();
             $this->dispatch('success', 'Settings updated!');
@@ -153,6 +157,12 @@ class Index extends Component
                     // Reset the force flag after using it
                     $this->forceSaveDomains = false;
                 }
+            }
+
+            // Prevent enabling auto-redirect without a domain
+            if ($this->is_auto_redirect_enabled && empty($this->fqdn)) {
+                $this->is_auto_redirect_enabled = false;
+                $this->dispatch('error', 'Auto-redirect requires a domain to be configured. The setting has been disabled.');
             }
 
             $this->instantSave(isSave: false);

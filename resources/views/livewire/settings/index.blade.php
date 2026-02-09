@@ -25,6 +25,11 @@
                                 placeholder="https://coolify.yourdomain.com" />
                             <x-forms.input canGate="update" :canResource="$settings" id="instance_name" label="Name" placeholder="Coolify"
                                 helper="Custom name for your Coolify instance, shown in the URL." />
+                        </div>
+                        <div class="w-full md:w-96">
+                            <x-forms.checkbox id="is_auto_redirect_enabled"
+                                label="Auto-redirect IP to Domain"
+                                helper="When enabled, requests via IP address are automatically redirected to the configured domain above. DNS is validated before redirecting to prevent lockouts. Requires a domain to be set. Press Save to apply. Emergency bypass: append ?no-redirect to any URL." />
                             <div class="w-full" x-data="{
                             open: false,
                             search: '{{ $settings->instance_timezone ?: '' }}',
